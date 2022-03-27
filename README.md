@@ -1,6 +1,7 @@
-# search_zip_code
+# CONSUMO DE API FLUTTER
 
-A new Flutter project.
+Este projeto tem como objetivo realizar o consumo de uma API através de um app que busca o CEP e traz
+o nome da rua, cidade e estado.
 
 ## Getting Started
 
