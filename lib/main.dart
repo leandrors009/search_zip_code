@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'dart:io';
+import './api_request.dart' as api;
 
 void main() {
   runApp(const MyApp());
@@ -14,6 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Search Zip Code',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -42,34 +44,6 @@ class _MyHomePageState extends State<MyHomePage> {
     textFieldController.dispose();
     super.dispose();
   }
-
-  _searchZipCode(cep) async {
-    var searchResults;
-    var url = setUrl(cep);
-    var response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      var jsonResponse =
-          convert.jsonDecode(response.body) as Map<String, dynamic>;
-
-      return ''' 
-
-    OPA! ENCONTREI AQUI 
-
-    CEP: ${jsonResponse['cep']}
-    ESTADO: ${jsonResponse['state']}
-    CIDADE: ${jsonResponse['city']}
-    BAIRRO: ${jsonResponse['neighborhood']}
-    RUA: ${jsonResponse['street']}
-    PROVEDOR: ${jsonResponse['service']}
-
-    ''';
-    } else {
-      searchResults = 'Error: ${response.statusCode}';
-    }
-  }
-
-  setUrl(String cep) => Uri.parse('https://brasilapi.com.br/api/cep/v1/{$cep}');
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _searchZipCode(textFieldController.text).then((value) {
+          api.searchZipCode(textFieldController.text).then((value) {
             showDialog(
               context: context,
               builder: (context) {
