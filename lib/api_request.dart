@@ -1,7 +1,8 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
+import 'models/cep.dart';
 
-searchZipCode(cep) async {
+Future<Cep> searchZipCode(cep) async {
   var url = setUrl(cep);
   var response = await http.get(url);
 
@@ -9,7 +10,7 @@ searchZipCode(cep) async {
     var jsonResponse =
         convert.jsonDecode(response.body) as Map<String, dynamic>;
 
-    return ''' 
+    print(''' 
 
     OPA! ENCONTREI AQUI 
 
@@ -21,11 +22,29 @@ searchZipCode(cep) async {
     LONGITUDE: ${jsonResponse['location']['coordinates']['longitude']}
     LATITUDE: ${jsonResponse['location']['coordinates']['latitude']}
     PROVEDOR: ${jsonResponse['service']}
+    ''');
 
+    Cep auxCep = Cep(
+        id: jsonResponse['cep'],
+        state: jsonResponse['state'],
+        city: jsonResponse['city'],
+        neighborhood: jsonResponse['neighborhood'],
+        street: jsonResponse['street'],
+        long: jsonResponse['location']['coordinates']['longitude'],
+        lat: jsonResponse['location']['coordinates']['latitude'],
+        service: jsonResponse['service']);
 
-    ''';
+    return auxCep;
   } else {
-    return 'Error: ${response.statusCode}';
+    return Cep(
+        id: '',
+        state: '',
+        city: '',
+        neighborhood: '',
+        street: '',
+        long: '',
+        lat: '',
+        service: '');
   }
 }
 
