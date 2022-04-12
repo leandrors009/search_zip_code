@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert' as convert;
-import 'dart:io';
-import './api_request.dart' as api;
 import 'screen/screen_zip_code.dart' as homepage;
 
 void main() {

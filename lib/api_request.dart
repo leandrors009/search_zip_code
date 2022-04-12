@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'models/cep.dart';
 
-Future<Cep> searchZipCode(cep) async {
+Future<Cep> searchZipCode(String cep) async {
   var url = setUrl(cep);
   var response = await http.get(url);
 
@@ -46,6 +46,7 @@ Future<Cep> searchZipCode(cep) async {
         lat: '',
         service: '');
   }
+  print("ACHEI NADA NÃO MANO");
 }
 
 setUrl(String cep) => Uri.parse('https://brasilapi.com.br/api/cep/v2/{$cep}');

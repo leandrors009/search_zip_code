@@ -10,14 +10,31 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final textFieldController = TextEditingController();
-  late Cep cepResult;
-  late bool ltemDados;
+  Cep cepResult = Cep(
+      id: '',
+      state: '',
+      city: '',
+      neighborhood: '',
+      street: '',
+      long: '',
+      lat: '',
+      service: '');
+
+  // @override
+  // void initState() {
+  //   buscaCep('');
+  //   setState(() {
+  //     ltemDados = false;
+  //   });
+  // }
 
   @override
   void initState() {
-    buscaCep('');
+    // TODO: implement initState
+    super.initState();
+
     setState(() {
-      ltemDados = false;
+      buscaCep('');
     });
   }
 
@@ -27,8 +44,8 @@ class _HomeState extends State<Home> {
     dispose();
   }
 
-  void buscaCep(String cepAux) {
-    api.searchZipCode(cepAux).then(
+  Future<void> buscaCep(String cepAux) async {
+    await api.searchZipCode(cepAux).then(
       (value) {
         setState(() {
           cepResult = value;
@@ -116,8 +133,9 @@ class _HomeState extends State<Home> {
                                 child: IconButton(
                                     icon: Icon(Icons.search),
                                     color: Colors.blueAccent[100],
-                                    onPressed: () =>
-                                        {buscaCep(textFieldController.text)}),
+                                    onPressed: () {
+                                      buscaCep(textFieldController.text);
+                                    }),
                                 backgroundColor: Colors.blue[50],
                               ),
                             ),
