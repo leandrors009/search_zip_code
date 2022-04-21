@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import '../api_request.dart' as api;
 import '../components/cardCep.dart';
@@ -10,6 +12,12 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final textFieldController = TextEditingController();
+  final _textNome = TextEditingController();
+  bool lExibeCard = false;
+  bool lExibeErro = false;
+  String? valueText;
+  String? codeDialog;
+
   Cep cepResult = Cep(
       id: '',
       state: '',
@@ -20,21 +28,17 @@ class _HomeState extends State<Home> {
       lat: '',
       service: '');
 
-  // @override
-  // void initState() {
-  //   buscaCep('');
-  //   setState(() {
-  //     ltemDados = false;
-  //   });
-  // }
+  String errorMessage = '';
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
     setState(() {
       buscaCep('');
+      lExibeCard = false;
+      lExibeErro = false;
+      errorMessage = '';
     });
   }
 
@@ -45,16 +49,74 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> buscaCep(String cepAux) async {
-    await api.searchZipCode(cepAux).then(
-      (value) {
-        setState(() {
-          cepResult = value;
-        });
-      },
-    );
+    setState(() {
+      lExibeCard = false;
+      lExibeErro = false;
+    });
+    try {
+      final Cep cepTosco = await api.searchZipCode(cepAux);
+      setState(() {
+        cepResult = cepTosco;
+        errorMessage = '';
+        lExibeCard = true;
+        lExibeErro = false;
+      });
+    } catch (e) {
+      setState(() {
+        lExibeCard = false;
+        if (cepAux.isEmpty) {
+          lExibeErro = false;
+          errorMessage = "";
+        } else {
+          lExibeErro = true;
+          errorMessage = "$e";
+        }
+
+        cepResult = Cep(
+            id: '',
+            state: '',
+            city: '',
+            neighborhood: '',
+            street: '',
+            long: '',
+            lat: '',
+            service: '');
+      });
+    }
   }
 
   FocusNode myFocusNode = FocusNode();
+
+  Future<void> displayInsertName(BuildContext context) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Insira seu primeiro nome:'),
+            content: TextField(
+              onChanged: (value) {
+                setState(() {
+                  valueText = value;
+                });
+              },
+              controller: _textNome,
+              decoration: InputDecoration(hintText: "Ex: João"),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                color: Colors.green,
+                onPressed: () {
+                  setState(() {
+                    codeDialog = valueText;
+                    Navigator.pop(context);
+                  });
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,19 +130,19 @@ class _HomeState extends State<Home> {
         body: SingleChildScrollView(
           child: SafeArea(
             child: Padding(
-              padding:
-                  EdgeInsets.only(left: 40, right: 40, top: 20, bottom: 20),
+              padding: const EdgeInsets.only(
+                  left: 40, right: 40, top: 20, bottom: 20),
               child: Column(
                 children: [
                   Padding(
                     // TEXTO DE BOAS VINDAS
-                    padding: EdgeInsets.only(top: 10, bottom: 20),
+                    padding: const EdgeInsets.only(top: 10, bottom: 20),
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                            children: const [
                               Text(
                                 "Olá,",
                                 style: TextStyle(
@@ -96,9 +158,9 @@ class _HomeState extends State<Home> {
                   ),
                   Padding(
                     // TEXTO "DIGITE O CEP PARA PESQUISAR"
-                    padding: EdgeInsets.only(top: 30),
+                    padding: const EdgeInsets.only(top: 30),
                     child: Row(
-                      children: [
+                      children: const [
                         Text(
                           'Digite o CEP para pesquisar:',
                           style: TextStyle(
@@ -109,7 +171,7 @@ class _HomeState extends State<Home> {
                   ),
                   Padding(
                     // BARRA DE PESQUISA
-                    padding: EdgeInsets.only(top: 20),
+                    padding: const EdgeInsets.only(top: 20),
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(25),
@@ -119,19 +181,20 @@ class _HomeState extends State<Home> {
                         cursorColor: Colors.black,
                         keyboardType: TextInputType.number,
                         textAlign: TextAlign.start,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 20,
                           color: Colors.black,
                         ),
                         decoration: InputDecoration(
                             fillColor: Colors.white,
-                            contentPadding: EdgeInsets.only(
+                            contentPadding: const EdgeInsets.only(
                                 left: 20, top: 15, right: 20, bottom: 15),
                             suffixIcon: Padding(
-                              padding: EdgeInsets.only(left: 15, right: 15),
+                              padding:
+                                  const EdgeInsets.only(left: 15, right: 15),
                               child: CircleAvatar(
                                 child: IconButton(
-                                    icon: Icon(Icons.search),
+                                    icon: const Icon(Icons.search),
                                     color: Colors.blueAccent[100],
                                     onPressed: () {
                                       buscaCep(textFieldController.text);
@@ -143,15 +206,15 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                   ),
-                  cepResult.id.isNotEmpty
-                      ? cardCep(cep: cepResult)
-                      : Padding(
-                          padding: EdgeInsets.all(50),
-                          child: Text(
-                            'CEP Inválido!',
-                            style: TextStyle(color: Colors.red, fontSize: 30),
-                          ),
-                        )
+                  if (lExibeCard) cardCep(cep: cepResult),
+                  if (lExibeErro)
+                    Padding(
+                      padding: EdgeInsets.all(50),
+                      child: Text(
+                        errorMessage,
+                        style: TextStyle(color: Colors.red, fontSize: 30),
+                      ),
+                    )
                 ],
               ),
             ),

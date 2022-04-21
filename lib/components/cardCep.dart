@@ -21,7 +21,7 @@ class cardCep extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           color: Colors.white,
         ),
-        height: MediaQuery.of(context).size.height / 1.8,
+        height: MediaQuery.of(context).size.height / 1.5,
         child: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
@@ -39,6 +39,8 @@ class cardCep extends StatelessWidget {
                       dadosWidget(title: 'RUA', content: this.cep.street),
                       dadosWidget(
                           title: 'BAIRRO', content: this.cep.neighborhood),
+                      dadosWidget(title: 'LONGITUDE', content: this.cep.long),
+                      dadosWidget(title: 'LATITUDE', content: this.cep.lat),
                     ],
                   ),
                 )

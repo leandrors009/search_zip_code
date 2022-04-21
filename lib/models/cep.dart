@@ -7,6 +7,7 @@ class Cep {
   String long;
   String lat;
   String service;
+  String message;
 
   Cep({
     required this.id,
@@ -17,5 +18,6 @@ class Cep {
     required this.long,
     required this.lat,
     this.service = "correios",
+    this.message = ""
   });
 }

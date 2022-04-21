@@ -17,20 +17,22 @@ class dadosWidget extends StatelessWidget {
                 // COMEÇO DA TERCEIRA LINHA DE DADOS
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "$title:",
-                        style: TextStyle(fontSize: 15, color: Colors.black45),
-                      ),
-                      Text(
-                        "$content",
-                        style: TextStyle(
-                          fontSize: 20,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "$title:",
+                          style: TextStyle(fontSize: 15, color: Colors.black45),
                         ),
-                      ),
-                    ],
+                        Text(
+                          "$content",
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

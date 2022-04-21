@@ -5,11 +5,8 @@ import 'models/cep.dart';
 Future<Cep> searchZipCode(String cep) async {
   var url = setUrl(cep);
   var response = await http.get(url);
-
+  var jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>;
   if (response.statusCode == 200) {
-    var jsonResponse =
-        convert.jsonDecode(response.body) as Map<String, dynamic>;
-
     print(''' 
 
     OPA! ENCONTREI AQUI 
@@ -22,6 +19,7 @@ Future<Cep> searchZipCode(String cep) async {
     LONGITUDE: ${jsonResponse['location']['coordinates']['longitude']}
     LATITUDE: ${jsonResponse['location']['coordinates']['latitude']}
     PROVEDOR: ${jsonResponse['service']}
+    
     ''');
 
     Cep auxCep = Cep(
@@ -30,23 +28,25 @@ Future<Cep> searchZipCode(String cep) async {
         city: jsonResponse['city'],
         neighborhood: jsonResponse['neighborhood'],
         street: jsonResponse['street'],
-        long: jsonResponse['location']['coordinates']['longitude'],
-        lat: jsonResponse['location']['coordinates']['latitude'],
+        long: jsonResponse['location']['coordinates']['longitude'] ?? '',
+        lat: jsonResponse['location']['coordinates']['latitude'] ?? '',
         service: jsonResponse['service']);
 
     return auxCep;
   } else {
-    return Cep(
-        id: '',
-        state: '',
-        city: '',
-        neighborhood: '',
-        street: '',
-        long: '',
-        lat: '',
-        service: '');
+    //print(jsonResponse['errors'][0]['message']);
+    throw jsonResponse['errors'][0]['message'];
+
+    // return Cep(
+    //     id: '',
+    //     state: '',
+    //     city: '',
+    //     neighborhood: '',
+    //     street: '',
+    //     long: '',
+    //     lat: '',
+    //     service: '');
   }
-  print("ACHEI NADA NÃO MANO");
 }
 
 setUrl(String cep) => Uri.parse('https://brasilapi.com.br/api/cep/v2/{$cep}');
